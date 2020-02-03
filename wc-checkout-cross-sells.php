@@ -2,14 +2,14 @@
 /*
 Plugin Name: Woocommerce Checkout Cross Sells
 Plugin URI: https://github.com/harisrozak/woocommerce-checkout-cross-sells/
-Description: A simple plugin to display WC cross sells function on checkout page
+Description: A simple plugin to move WC cross sells function from cart page to checkout page
 Version: 0.1
 Author: harisrozak
 Author URI: https://harisrozak.github.io/
 */
 
+// add cross sells section on checkout page
 add_action( 'woocommerce_after_checkout_form', 'harisrozak_woocommerce_cross_sell_display' );
-
 function harisrozak_woocommerce_cross_sell_display() {
 	// Get visible cross sells then sort them at random.
 	$cross_sells = array_filter( array_map( 'wc_get_product', WC()->cart->get_cross_sells() ), 'wc_products_array_filter_visible' );
@@ -34,5 +34,11 @@ function harisrozak_woocommerce_cross_sell_display() {
 			'orderby'        => $orderby,
 			'columns'        => $columns,
 		)
-	);
+	);	
+}
+
+// remove cross sells section from cart
+add_action( 'woocommerce_after_cart_table', 'harisrozak_remove_cross_sells_section_from_cart' );
+function harisrozak_remove_cross_sells_section_from_cart() {
+	remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cross_sell_display', 10 );
 }
